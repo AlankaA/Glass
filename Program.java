@@ -49,46 +49,12 @@ public class Program {
         while (action != 6) {
             action = readIntMenu(input);
             switch (action) {
-                case 1: // Add water
-                    if (handleFullGlass(glass)) {
-                        break;
-                    }
-                    while (true) {
-                        int waterVolumeToAdd = readIntOrZero(input, ENTER_ML_TO_ADD);
-                        if (waterVolumeToAdd == 0) {
-                            printInfoMessage(BACK_TO_MENU);
-                            break;
-                        }
-                        int waterAlreadyInGlass = glass.getWaterInGlass();
-                        glass.addWaterML(waterVolumeToAdd);
-                        int waterVolumeWasAdded = (glass.getWaterInGlass() - waterAlreadyInGlass);
-                        printInfoMessage("Added " + waterVolumeWasAdded + " ml. " +
-                                        "Can be added: " + glass.getFreeSpace() + " ml.");
-                        if (handleFullGlass(glass)) {
-                            break;
-                        }
-                    }
+                case 1:
+                    addWaterML(input, glass);
                     break;
 
-                case 2: // Remove water
-                    if (handleEmptyGlass(glass)) {
-                        break;
-                    }
-                    while (true) {
-                        int mlDel = readIntOrZero(input, ENTER_ML_TO_DEL);
-                        if (mlDel == 0) {
-                            printInfoMessage(BACK_TO_MENU);
-                            break;
-                        }
-                        int mlBeforeDel = glass.getWaterInGlass();
-                        glass.removeWaterML(mlDel);
-                        int realDel = (mlBeforeDel - glass.getWaterInGlass());
-                        printInfoMessage("Removed " + realDel + " ml. " +
-                                        "Can be removed: " + glass.getWaterInGlass() + " ml.");
-                        if (handleEmptyGlass(glass)) {
-                            break;
-                        }
-                    }
+                case 2:
+                    removeWaterML(input, glass);
                     break;
 
                 case 3:
@@ -122,6 +88,48 @@ public class Program {
 
 
     // Business rules (glass state)
+    public static void addWaterML(Scanner input, Glass glass) {
+        if (handleFullGlass(glass)) {
+            return;
+        }
+        while (true) {
+            int waterVolumeToAdd = readIntOrZero(input, ENTER_ML_TO_ADD);
+            if (waterVolumeToAdd == 0) {
+                printInfoMessage(BACK_TO_MENU);
+                break;
+            }
+            int waterAlreadyInGlass = glass.getWaterInGlass();
+            glass.addWaterML(waterVolumeToAdd);
+            int waterVolumeWasAdded = (glass.getWaterInGlass() - waterAlreadyInGlass);
+            printInfoMessage("Added " + waterVolumeWasAdded + " ml. " +
+                    "Can be added: " + glass.getFreeSpace() + " ml.");
+            if (handleFullGlass(glass)) {
+                break;
+            }
+        }
+    }
+
+    public static void removeWaterML(Scanner input, Glass glass) {
+        if (handleEmptyGlass(glass)){
+            return;
+        }
+        while (true) {
+            int mlDel = readIntOrZero(input, ENTER_ML_TO_DEL);
+            if (mlDel == 0) {
+                printInfoMessage(BACK_TO_MENU);
+                break;
+            }
+            int mlBeforeDel = glass.getWaterInGlass();
+            glass.removeWaterML(mlDel);
+            int realDel = (mlBeforeDel - glass.getWaterInGlass());
+            printInfoMessage("Removed " + realDel + " ml. " +
+                    "Can be removed: " + glass.getWaterInGlass() + " ml.");
+            if (handleEmptyGlass(glass)) {
+                break;
+            }
+        }
+    }
+
     static boolean handleFullGlass(Glass glass) {
         if (glass.isFull()) {
             printInfoMessage(GLASS_IS_FULL);
