@@ -2,11 +2,34 @@ package Stakan;
 import java.util.Scanner;
 
 public class Program {
+    public static final String MENU = """
+                \n===========MENU===========
+                Choose one of the options
+                1. Add water
+                2. Remove water
+                3. Get volume of the glass
+                4. Get water in glass
+                5. Get free space
+                6. Exit
+                ==========================""";
+    public static final String BACK_TO_MENU = "[INFO] Back to menu.";
+    public static final String MENU_INVALID_OPTION = "[ERROR] Invalid option. Choose 1-6.";
+    public static final String EMPTY_IS_NOT_ALLOWED = "[ERROR] Empty input is not allowed.";
+    public static final String NEGATIVE_IS_NOT_ALLOWED = "[ERROR] Negative input is not allowed.";
+    public static final String NUMBER_GREATER_THAN_ZERO = "[ERROR] Number should be greater than zero.";
+    public static final String ENTER_INTEGER = "[ERROR] Invalid input. Enter an integer.";
+    public static final String GLASS_VOLUME = "[PROMPT] Enter glass volume (ml):";
+    public static final String GLASS_IS_EMPTY = "[INFO] The glass is empty. Nothing to delete.";
+    public static final String GLASS_IS_FULL = "[INFO] Glass is full. No more water can be added.";
+    public static final String EXIT = "[INFO] Exiting...";
+    public static final String FINISHED = "[INFO] Program finished.";
+
+
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
         // Logic creating a Glass object with input parameters.
-        int glassVolume = readPositiveInt(input, "What`s the volume of the glass?");
+        int glassVolume = readPositiveInt(input, GLASS_VOLUME);
         Glass glass = new Glass(glassVolume);
 
 
@@ -17,15 +40,14 @@ public class Program {
             switch (action) {
                 case 1:
                     // Add water
-                    String glassFull = "[INFO] The glass is full. No more water can be added.";
                     if (glass.isFull()) {
-                        System.out.println(glassFull);
+                        System.out.println(GLASS_IS_FULL);
                         break;
                     }
                     while (true) {
                         int mlAdd = readIntOrZero(input, "Enter ml to add (0 = back)");
                         if (mlAdd == 0) {
-                            System.out.println("[INFO] Back to menu.");
+                            System.out.println(BACK_TO_MENU);
                             break;
                         }
 
@@ -37,7 +59,7 @@ public class Program {
 
                         // Prevent add water to Full glass
                         if (glass.isFull()) {
-                            System.out.println(glassFull);
+                            System.out.println(GLASS_IS_FULL);
                             break;
                         }
                     }
@@ -45,15 +67,14 @@ public class Program {
 
                 case 2:
                     // Remove water
-                    String glassEmpty = "[INFO] The glass is empty. There is nothing to remove.";
                     if (glass.isEmpty()) {
-                        System.out.println(glassEmpty);
+                        System.out.println(GLASS_IS_EMPTY);
                         break;
                     }
                     while (true) {
                         int mlDel = readIntOrZero(input, "Enter ml to remove (0 = back)");
                         if (mlDel == 0) {
-                            System.out.println("[INFO] Back to menu.");
+                            System.out.println(BACK_TO_MENU);
                             break;
                         }
 
@@ -63,7 +84,7 @@ public class Program {
                         System.out.println("[INFO] Removed " + realDel + "ml.\tCan be removed: "
                                 + glass.getWaterInGlass() + "ml.");
                         if (glass.isEmpty()) {
-                            System.out.println(glassEmpty);
+                            System.out.println(GLASS_IS_EMPTY);
                             break;
                         }
                     }
@@ -86,29 +107,19 @@ public class Program {
 
                 case 6:
                     // Exit
-                    System.out.println("[INFO] Exiting ... ");
+                    System.out.println(EXIT);
                     break;
 
                 default:
-                    System.out.println("[ERROR] Something went wrong.");
+                    throw new IllegalArgumentException("Unexpected menu option: " + action);
             }
         }
-        System.out.print("[INFO] The program is finished!");
+        System.out.print(FINISHED);
     }
 
 
     static void printMenu() {
-        String menu = """
-                \n===========MENU===========
-                Choose one of the options
-                1. Add water
-                2. Remove water
-                3. Get volume of the glass
-                4. Get water in glass
-                5. Get free space
-                6. Exit
-                ==========================""";
-        System.out.println(menu);
+        System.out.println(MENU);
     }
 
 
@@ -120,7 +131,7 @@ public class Program {
 
                 // Prevent empty input
                 if (inputValue.isEmpty()) {
-                    System.out.println("[ERROR] Empty input is NOT allowed.");
+                    System.out.println(EMPTY_IS_NOT_ALLOWED);
                     continue;
                 }
 
@@ -129,12 +140,12 @@ public class Program {
 
                 // Prevent input less than 0 or more than 6
                 if (parsedInput <= 0 || parsedInput > 6) {
-                    System.out.println("[ERROR] Choose from 1-6.");
+                    System.out.println(MENU_INVALID_OPTION);
                     continue;
                 }
                 return parsedInput;
             } catch (NumberFormatException e) {
-                System.out.println("[ERROR] Input must be an integer.");
+                System.out.println(ENTER_INTEGER);
             }
         }
     }
@@ -148,7 +159,7 @@ public class Program {
                 // Prevent empty input
                 String inputValue = input.nextLine().trim();
                 if (inputValue.isEmpty()) {
-                    System.out.println("[ERROR] Empty input is NOT allowed.");
+                    System.out.println(EMPTY_IS_NOT_ALLOWED);
                     continue;
                 }
 
@@ -157,13 +168,13 @@ public class Program {
 
                 // Prevent 0 input
                 if (parsedInput <= 0) {
-                    System.out.println("[ERROR] Number should be greater than zero.");
+                    System.out.println(NUMBER_GREATER_THAN_ZERO);
                     continue;
                 }
 
                 return parsedInput;
             } catch (NumberFormatException e) {
-                System.out.println("[ERROR] Input must be a number.");
+                System.out.println(ENTER_INTEGER);
             }
         }
     }
@@ -176,7 +187,7 @@ public class Program {
                 // Prevent empty input
                 String inputValue = input.nextLine().trim();
                 if (inputValue.isEmpty()) {
-                    System.out.println("[ERROR] Empty input is NOT allowed.");
+                    System.out.println(EMPTY_IS_NOT_ALLOWED);
                     continue;
                 }
 
@@ -185,12 +196,12 @@ public class Program {
 
                 // Prevent input less than 0
                 if (parsedInput < 0) {
-                    System.out.println("[ERROR] Negative input is NOT allowed.");
+                    System.out.println(NEGATIVE_IS_NOT_ALLOWED);
                     continue;
                 }
                 return parsedInput;
             } catch (NumberFormatException e) {
-                System.out.println("[ERROR] Input must be a number.");
+                System.out.println(ENTER_INTEGER);
             }
         }
     }
