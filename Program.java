@@ -1,5 +1,6 @@
 package Stakan;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Program {
     public static final String MENU = """
@@ -11,6 +12,7 @@ public class Program {
                 4. Get water in glass
                 5. Get free space
                 6. Exit
+                7. Change watter color
                 ==========================""";
     public static final String BACK_TO_MENU = "[INFO] Back to menu.";
     public static final String MENU_INVALID_OPTION = "[ERROR] Invalid option. Choose 1-6.";
@@ -23,7 +25,12 @@ public class Program {
     public static final String GLASS_IS_FULL = "[INFO] Glass is full. No more water can be added.";
     public static final String EXIT = "[INFO] Exiting...";
     public static final String FINISHED = "[INFO] Program finished.";
+    private static String waterColor = "";
 
+
+    public static void printMessage(String message){
+        System.out.println(waterColor + message + Colors.ResetColor);
+    }
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -41,25 +48,25 @@ public class Program {
                 case 1:
                     // Add water
                     if (glass.isFull()) {
-                        System.out.println(GLASS_IS_FULL);
+                        printMessage(GLASS_IS_FULL);
                         break;
                     }
                     while (true) {
-                        int mlAdd = readIntOrZero(input, "Enter ml to add (0 = back)");
-                        if (mlAdd == 0) {
-                            System.out.println(BACK_TO_MENU);
+                        int watterVolumeToAdd = readIntOrZero(input, "Enter ml to add (0 = back)");
+                        if (watterVolumeToAdd == 0) {
+                            printMessage(BACK_TO_MENU);
                             break;
                         }
 
-                        int mlBeforeAdd = glass.getWaterInGlass();
-                        glass.addWaterML(mlAdd);
-                        int realAdd = (glass.getWaterInGlass() - mlBeforeAdd);
-                        System.out.println("[INFO] Added " + realAdd + "ml.\tCan be added: "
+                        int watterAlreadyInGlass = glass.getWaterInGlass();
+                        glass.addWaterML(watterVolumeToAdd);
+                        int watterVolumeWasAdded = (glass.getWaterInGlass() - watterAlreadyInGlass);
+                        printMessage("[INFO] Added " + watterVolumeWasAdded + "ml.\tCan be added: "
                                 + glass.getFreeSpace() + "ml.");
 
                         // Prevent add water to Full glass
                         if (glass.isFull()) {
-                            System.out.println(GLASS_IS_FULL);
+                            printMessage(GLASS_IS_FULL);
                             break;
                         }
                     }
@@ -68,23 +75,23 @@ public class Program {
                 case 2:
                     // Remove water
                     if (glass.isEmpty()) {
-                        System.out.println(GLASS_IS_EMPTY);
+                        printMessage(GLASS_IS_EMPTY);
                         break;
                     }
                     while (true) {
                         int mlDel = readIntOrZero(input, "Enter ml to remove (0 = back)");
                         if (mlDel == 0) {
-                            System.out.println(BACK_TO_MENU);
+                            printMessage(BACK_TO_MENU);
                             break;
                         }
 
                         int mlBeforeDel = glass.getWaterInGlass();
                         glass.removeWaterML(mlDel);
                         int realDel = (mlBeforeDel - glass.getWaterInGlass());
-                        System.out.println("[INFO] Removed " + realDel + "ml.\tCan be removed: "
+                        printMessage("[INFO] Removed " + realDel + "ml.\tCan be removed: "
                                 + glass.getWaterInGlass() + "ml.");
                         if (glass.isEmpty()) {
-                            System.out.println(GLASS_IS_EMPTY);
+                            printMessage(GLASS_IS_EMPTY);
                             break;
                         }
                     }
@@ -92,34 +99,40 @@ public class Program {
 
                 case 3:
                     // Get volume of the glass
-                    System.out.println("[INFO] Glass volume: " + glass.getGlassVolumeML() + "ml.");
+                    printMessage("[INFO] Glass volume: " + glass.getGlassVolumeML() + "ml.");
                     break;
 
                 case 4:
                     //Get water in glass
-                    System.out.println("[INFO] Water in glass: " + glass.getWaterInGlass() + "ml.");
+                    printMessage("[INFO] Water in glass: " + glass.getWaterInGlass() + "ml.");
                     break;
 
                 case 5:
                     //Get free space
-                    System.out.println("[INFO] Free space: " + glass.getFreeSpace() + "ml.");
+                    printMessage("[INFO] Free space: " + glass.getFreeSpace() + "ml.");
                     break;
 
                 case 6:
                     // Exit
-                    System.out.println(EXIT);
+                    printMessage(EXIT);
+                    break;
+
+                case 7:
+                    var random = ThreadLocalRandom.current().nextInt(0, 7);
+                    waterColor = Colors.getColor(random);
+                    System.out.println(Colors.getColor(random) + "[INFO] Water color changed!" + Colors.getColor(0));
                     break;
 
                 default:
                     throw new IllegalArgumentException("Unexpected menu option: " + action);
             }
         }
-        System.out.print(FINISHED);
+        printMessage(FINISHED);
     }
 
 
     static void printMenu() {
-        System.out.println(MENU);
+        printMessage(MENU);
     }
 
 
@@ -131,7 +144,7 @@ public class Program {
 
                 // Prevent empty input
                 if (inputValue.isEmpty()) {
-                    System.out.println(EMPTY_IS_NOT_ALLOWED);
+                    printMessage(EMPTY_IS_NOT_ALLOWED);
                     continue;
                 }
 
@@ -139,13 +152,13 @@ public class Program {
                 int parsedInput = Integer.parseInt(inputValue);
 
                 // Prevent input less than 0 or more than 6
-                if (parsedInput <= 0 || parsedInput > 6) {
-                    System.out.println(MENU_INVALID_OPTION);
+                if (parsedInput <= 0 || parsedInput > 7) {
+                    printMessage(MENU_INVALID_OPTION);
                     continue;
                 }
                 return parsedInput;
             } catch (NumberFormatException e) {
-                System.out.println(ENTER_INTEGER);
+                printMessage(ENTER_INTEGER);
             }
         }
     }
@@ -159,7 +172,7 @@ public class Program {
                 // Prevent empty input
                 String inputValue = input.nextLine().trim();
                 if (inputValue.isEmpty()) {
-                    System.out.println(EMPTY_IS_NOT_ALLOWED);
+                    printMessage(EMPTY_IS_NOT_ALLOWED);
                     continue;
                 }
 
@@ -168,13 +181,13 @@ public class Program {
 
                 // Prevent 0 input
                 if (parsedInput <= 0) {
-                    System.out.println(NUMBER_GREATER_THAN_ZERO);
+                    printMessage(NUMBER_GREATER_THAN_ZERO);
                     continue;
                 }
 
                 return parsedInput;
             } catch (NumberFormatException e) {
-                System.out.println(ENTER_INTEGER);
+                printMessage(ENTER_INTEGER);
             }
         }
     }
@@ -183,11 +196,11 @@ public class Program {
     static int readIntOrZero(Scanner input, String message) {
         while (true) {
             try {
-                System.out.println(message);
+                printMessage(message);
                 // Prevent empty input
                 String inputValue = input.nextLine().trim();
                 if (inputValue.isEmpty()) {
-                    System.out.println(EMPTY_IS_NOT_ALLOWED);
+                    printMessage(EMPTY_IS_NOT_ALLOWED);
                     continue;
                 }
 
@@ -196,12 +209,12 @@ public class Program {
 
                 // Prevent input less than 0
                 if (parsedInput < 0) {
-                    System.out.println(NEGATIVE_IS_NOT_ALLOWED);
+                    printMessage(NEGATIVE_IS_NOT_ALLOWED);
                     continue;
                 }
                 return parsedInput;
             } catch (NumberFormatException e) {
-                System.out.println(ENTER_INTEGER);
+                printMessage(ENTER_INTEGER);
             }
         }
     }
