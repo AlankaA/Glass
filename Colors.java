@@ -1,6 +1,4 @@
 package Stakan;
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class Colors {
